@@ -66,13 +66,12 @@
                     </div>
                     <textarea id="inputText" rows="5" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"></textarea>
                 </div>
-                <!-- Grade de botões atualizada para melhor responsividade -->
+                <!-- Grade de botões -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
                     <button id="toUpperCaseBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">MAIÚSCULAS</button>
                     <button id="toLowerCaseBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">minúsculas</button>
                     <button id="swapCharsBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">Trocar - / _</button>
-                    <!-- BOTÃO NOVO ADICIONADO -->
-                    <button id="toSlugBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">CRIAR SLUG</button>
+                    <button id="toPythonListBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">LISTA PYTHON</button>
                     <button id="toSha256Btn" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">SHA-256 HASH</button>
                     <button id="clearBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">LIMPAR</button>
                 </div>
@@ -88,7 +87,7 @@
             </div>
         </div>
 
-        <!-- Página 2: Calculadora de Tamanho de Amostra (Tema Escuro Aplicado) -->
+        <!-- Página 2: Calculadora de Tamanho de Amostra -->
         <div id="sample-size-calculator" class="page fade-in">
              <div class="w-full max-w-2xl mx-auto bg-gray-800 rounded-2xl shadow-2xl p-8 md:p-12 space-y-8 text-gray-100">
                 <div class="text-center">
@@ -156,13 +155,11 @@
                 const pageId = link.getAttribute('href').substring(1);
                 showPage(pageId);
                 
-                // Estiliza o link ativo
                 navLinks.forEach(navLink => navLink.classList.remove('bg-gray-700'));
                 link.classList.add('bg-gray-700');
             });
         });
         
-        // Mostra a primeira página por padrão e define o link como ativo
         navLinks[0].classList.add('bg-gray-700');
         showPage('text-tool');
 
@@ -172,8 +169,7 @@
         const toUpperCaseBtn = document.getElementById('toUpperCaseBtn');
         const toLowerCaseBtn = document.getElementById('toLowerCaseBtn');
         const swapCharsBtn = document.getElementById('swapCharsBtn');
-        // NOVA REFERÊNCIA DE BOTÃO
-        const toSlugBtn = document.getElementById('toSlugBtn');
+        const toPythonListBtn = document.getElementById('toPythonListBtn');
         const toSha256Btn = document.getElementById('toSha256Btn');
         const clearBtn = document.getElementById('clearBtn');
         const outputText = document.getElementById('outputText');
@@ -204,19 +200,27 @@
             outputText.value = newText;
         });
 
-        // NOVA LÓGICA PARA O BOTÃO DE SLUG
-        toSlugBtn.addEventListener('click', () => {
+        // LÓGICA ATUALIZADA PARA O BOTÃO DE LISTA PYTHON
+        toPythonListBtn.addEventListener('click', () => {
             const text = inputText.value;
-            const slug = text
-                .toString()
-                .normalize('NFD') // Separa o acento da letra
-                .replace(/[\u0300-\u036f]/g, '') // Remove os acentos
-                .toLowerCase()
-                .trim()
-                .replace(/\s+/g, '-') // Substitui espaços por hífens
-                .replace(/[^\w-]+/g, '') // Remove todos os caracteres que não são palavras ou hífens
-                .replace(/--+/g, '-'); // Substitui múltiplos hífens por um único
-            outputText.value = slug;
+            if (!text.trim()) {
+                outputText.value = '[]';
+                return;
+            }
+            // Usa uma expressão regular para encontrar apenas sequências de caracteres de palavra, ignorando pontuação.
+            const tokens = text.match(/\w+/g) || [];
+
+            if (tokens.length === 0) {
+                outputText.value = '[]';
+                return;
+            }
+            
+            // Formata cada item como uma string Python, escapando aspas duplas.
+            const formattedItems = tokens.map(item => `"${item.replace(/"/g, '\\"')}"`);
+
+            // Junta os itens e os envolve em colchetes.
+            const pythonList = `[${formattedItems.join(', ')}]`;
+            outputText.value = pythonList;
         });
 
         toSha256Btn.addEventListener('click', async () => {
