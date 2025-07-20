@@ -3,12 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversor de Texto, Hash e Contador</title>
+    <title>Ferramentas Web Unificadas</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
+        }
+        /* Oculta páginas que não estão ativas */
+        .page {
+            display: none;
+        }
+        /* Mostra a página ativa */
+        .page.active {
+            display: block;
+        }
+        /* Animação de fade-in para o conteúdo */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         /* Estilo para a notificação */
         .notification {
@@ -16,50 +32,103 @@
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
-    <div class="w-full max-w-lg mx-auto p-6 md:p-8 bg-gray-800 rounded-2xl shadow-2xl">
-        
-        <h1 class="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-100">Ferramenta de Texto</h1>
-        
-        <!-- Área de Input -->
-        <div class="mb-4">
-            <div class="flex justify-between items-center mb-2">
-                <label for="inputText" class="block text-sm font-medium text-gray-400">Digite ou cole seu texto aqui:</label>
-                <div id="charCount" class="text-sm text-gray-400 font-medium">0 caracteres</div>
+<body class="bg-gray-900 text-white flex min-h-screen">
+
+    <!-- Barra Lateral de Navegação -->
+    <aside class="w-64 bg-gray-800 p-6 shadow-2xl flex-col hidden md:flex">
+        <h1 class="text-2xl font-bold text-white mb-8">Ferramentas</h1>
+        <nav>
+            <ul>
+                <li>
+                    <a href="#text-tool" class="nav-link text-lg text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg p-3 block transition duration-200">
+                        Conversor de Texto
+                    </a>
+                </li>
+                <li class="mt-2">
+                    <a href="#sample-size-calculator" class="nav-link text-lg text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg p-3 block transition duration-200">
+                        Calculadora de Amostra
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Área de Conteúdo Principal -->
+    <main class="flex-1 p-4 md:p-10">
+        <!-- Página 1: Ferramenta de Texto -->
+        <div id="text-tool" class="page active fade-in">
+            <div class="w-full max-w-2xl mx-auto p-6 md:p-8 bg-gray-800 rounded-2xl shadow-2xl">
+                <h1 class="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-100">Conversor de Texto</h1>
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="inputText" class="block text-sm font-medium text-gray-400">Digite ou cole seu texto aqui:</label>
+                        <div id="charCount" class="text-sm text-gray-400 font-medium">0 caracteres</div>
+                    </div>
+                    <textarea id="inputText" rows="5" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"></textarea>
+                </div>
+                <!-- Grade de botões atualizada para melhor responsividade -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+                    <button id="toUpperCaseBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">MAIÚSCULAS</button>
+                    <button id="toLowerCaseBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">minúsculas</button>
+                    <button id="swapCharsBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">Trocar - / _</button>
+                    <!-- BOTÃO NOVO ADICIONADO -->
+                    <button id="toSlugBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">CRIAR SLUG</button>
+                    <button id="toSha256Btn" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">SHA-256 HASH</button>
+                    <button id="clearBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">LIMPAR</button>
+                </div>
+                <div>
+                    <label for="outputText" class="block text-sm font-medium text-gray-400 mb-2">Resultado:</label>
+                    <div class="relative">
+                        <textarea id="outputText" rows="5" readonly class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-gray-300 cursor-not-allowed select-all font-mono"></textarea>
+                        <button id="copyBtn" class="absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition duration-200" title="Copiar para a área de transferência">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <textarea id="inputText" rows="5" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"></textarea>
         </div>
 
-        <!-- Botões de Ação -->
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <button id="toUpperCaseBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
-                MAIÚSCULAS
-            </button>
-            <button id="toLowerCaseBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
-                minúsculas
-            </button>
-            <button id="toSha256Btn" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
-                SHA-256 HASH
-            </button>
-            <!-- NOVO: Botão Limpar -->
-            <button id="clearBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
-                LIMPAR
-            </button>
-        </div>
-
-        <!-- Área de Resultado -->
-        <div>
-            <label for="outputText" class="block text-sm font-medium text-gray-400 mb-2">Resultado:</label>
-            <div class="relative">
-                <textarea id="outputText" rows="5" readonly class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-gray-300 cursor-not-allowed select-all font-mono"></textarea>
-                <button id="copyBtn" class="absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition duration-200" title="Copiar para a área de transferência">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                </button>
+        <!-- Página 2: Calculadora de Tamanho de Amostra (Tema Escuro Aplicado) -->
+        <div id="sample-size-calculator" class="page fade-in">
+             <div class="w-full max-w-2xl mx-auto bg-gray-800 rounded-2xl shadow-2xl p-8 md:p-12 space-y-8 text-gray-100">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-100">Calculadora de Tamanho de Amostra</h1>
+                    <p class="text-gray-400 mt-2">Descubra o tamanho ideal da sua amostra com confiança estatística.</p>
+                </div>
+                <div id="calculator-form" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label for="population" class="block text-sm font-medium text-gray-400 mb-1">Tamanho População (N)</label>
+                        <input type="number" id="population" value="6000" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    </div>
+                    <div>
+                        <label for="confidence" class="block text-sm font-medium text-gray-400 mb-1">Nível de Confiança (%)</label>
+                        <select id="confidence" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                            <option value="80">80%</option>
+                            <option value="85">85%</option>
+                            <option value="90">90%</option>
+                            <option value="95" selected>95% (Padrão)</option>
+                            <option value="98">98%</option>
+                            <option value="99">99%</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="margin" class="block text-sm font-medium text-gray-400 mb-1">Margem de Erro (%)</label>
+                        <input type="number" id="margin" value="5" min="1" max="10" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button id="calculate-btn" class="w-full md:w-auto bg-blue-600 text-white font-bold py-3 px-10 rounded-lg shadow-lg hover:bg-blue-700 transform hover:-translate-y-0.5 transition-all duration-300">
+                        Calcular Amostra
+                    </button>
+                </div>
+                <div id="result-area" class="hidden text-center bg-gray-900 border-2 border-dashed border-gray-700 rounded-2xl p-8">
+                    <p class="text-lg text-gray-400">O tamanho de amostra recomendado é:</p>
+                    <p id="sample-size" class="text-6xl md:text-7xl font-black text-[#5C4D7D] my-2">362</p>
+                    <p id="result-explanation" class="text-sm text-gray-400 max-w-md mx-auto">Este valor garante um nível de confiança de 95% com uma margem de erro de 5% para a sua população de 6000.</p>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- Notificação de "Copiado!" -->
     <div id="notification" class="notification fixed bottom-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transform translate-y-2">
@@ -67,34 +136,89 @@
     </div>
 
     <script>
-        // Seleciona os elementos da página
+        // --- LÓGICA DE NAVEGAÇÃO ---
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.page');
+
+        function showPage(pageId) {
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            const activePage = document.getElementById(pageId);
+            if (activePage) {
+                activePage.classList.add('active');
+            }
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const pageId = link.getAttribute('href').substring(1);
+                showPage(pageId);
+                
+                // Estiliza o link ativo
+                navLinks.forEach(navLink => navLink.classList.remove('bg-gray-700'));
+                link.classList.add('bg-gray-700');
+            });
+        });
+        
+        // Mostra a primeira página por padrão e define o link como ativo
+        navLinks[0].classList.add('bg-gray-700');
+        showPage('text-tool');
+
+
+        // --- LÓGICA DA FERRAMENTA DE TEXTO ---
         const inputText = document.getElementById('inputText');
         const toUpperCaseBtn = document.getElementById('toUpperCaseBtn');
         const toLowerCaseBtn = document.getElementById('toLowerCaseBtn');
+        const swapCharsBtn = document.getElementById('swapCharsBtn');
+        // NOVA REFERÊNCIA DE BOTÃO
+        const toSlugBtn = document.getElementById('toSlugBtn');
         const toSha256Btn = document.getElementById('toSha256Btn');
-        const clearBtn = document.getElementById('clearBtn'); // Novo botão
+        const clearBtn = document.getElementById('clearBtn');
         const outputText = document.getElementById('outputText');
         const copyBtn = document.getElementById('copyBtn');
         const notification = document.getElementById('notification');
         const charCount = document.getElementById('charCount');
 
-        // Listener para contagem de caracteres
         inputText.addEventListener('input', () => {
             const count = inputText.value.length;
             charCount.textContent = `${count} ${count === 1 ? 'caracter' : 'caracteres'}`;
         });
 
-        // Função para converter para maiúsculas
         toUpperCaseBtn.addEventListener('click', () => {
             outputText.value = inputText.value.toUpperCase();
         });
 
-        // Função para converter para minúsculas
         toLowerCaseBtn.addEventListener('click', () => {
             outputText.value = inputText.value.toLowerCase();
         });
-        
-        // Função para calcular o hash SHA-256
+
+        swapCharsBtn.addEventListener('click', () => {
+            const text = inputText.value;
+            const newText = text.split('').map(char => {
+                if (char === '-') return '_';
+                if (char === '_') return '-';
+                return char;
+            }).join('');
+            outputText.value = newText;
+        });
+
+        // NOVA LÓGICA PARA O BOTÃO DE SLUG
+        toSlugBtn.addEventListener('click', () => {
+            const text = inputText.value;
+            const slug = text
+                .toString()
+                .normalize('NFD') // Separa o acento da letra
+                .replace(/[\u0300-\u036f]/g, '') // Remove os acentos
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, '-') // Substitui espaços por hífens
+                .replace(/[^\w-]+/g, '') // Remove todos os caracteres que não são palavras ou hífens
+                .replace(/--+/g, '-'); // Substitui múltiplos hífens por um único
+            outputText.value = slug;
+        });
+
         toSha256Btn.addEventListener('click', async () => {
             const originalText = inputText.value;
             if (!originalText) {
@@ -114,15 +238,12 @@
             }
         });
 
-        // --- NOVO: Função para limpar o texto ---
         clearBtn.addEventListener('click', () => {
             inputText.value = '';
             outputText.value = '';
-            // Dispara o evento de input para atualizar o contador de caracteres
             inputText.dispatchEvent(new Event('input'));
         });
 
-        // Função para copiar o texto
         copyBtn.addEventListener('click', () => {
             if (outputText.value) {
                 const textArea = document.createElement('textarea');
@@ -138,17 +259,65 @@
                 document.body.removeChild(textArea);
             }
         });
-        
-        // Função para exibir a notificação
+
         function showNotification() {
             notification.classList.remove('opacity-0', 'translate-y-2');
             notification.classList.add('opacity-100', 'translate-y-0');
-
             setTimeout(() => {
                 notification.classList.remove('opacity-100', 'translate-y-0');
                 notification.classList.add('opacity-0', 'translate-y-2');
-            }, 2000); // A notificação desaparece após 2 segundos
+            }, 2000);
         }
+
+        // --- LÓGICA DA CALCULADORA DE AMOSTRA ---
+        const populationInput = document.getElementById('population');
+        const confidenceInput = document.getElementById('confidence');
+        const marginInput = document.getElementById('margin');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const resultArea = document.getElementById('result-area');
+        const sampleSizeText = document.getElementById('sample-size');
+        const resultExplanationText = document.getElementById('result-explanation');
+
+        calculateBtn.addEventListener('click', calculateSampleSize);
+        populationInput.addEventListener('input', calculateSampleSize);
+        confidenceInput.addEventListener('change', calculateSampleSize);
+        marginInput.addEventListener('input', calculateSampleSize);
+
+        function calculateSampleSize() {
+            const N = parseInt(populationInput.value);
+            const confidenceLevel = parseInt(confidenceInput.value);
+            const e = parseFloat(marginInput.value) / 100;
+
+            if (isNaN(N) || isNaN(confidenceLevel) || isNaN(e) || N <= 0 || e <= 0 || e > 0.1) {
+                resultArea.classList.add('hidden');
+                return;
+            }
+
+            let Z;
+            switch (confidenceLevel) {
+                case 80: Z = 1.28; break;
+                case 85: Z = 1.44; break;
+                case 90: Z = 1.645; break;
+                case 95: Z = 1.96; break;
+                case 98: Z = 2.33; break;
+                case 99: Z = 2.58; break;
+                default: Z = 1.96;
+            }
+            
+            const p = 0.5;
+            const n0 = (Z * Z * p * (1 - p)) / (e * e);
+            const n = n0 / (1 + ((n0 - 1) / N));
+            const finalSampleSize = Math.ceil(n);
+
+            sampleSizeText.textContent = finalSampleSize;
+            resultExplanationText.textContent = `Este valor garante um nível de confiança de ${confidenceLevel}% com uma margem de erro de ${marginInput.value}% para a sua população de ${N}.`;
+            
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('fade-in');
+        }
+        
+        // Executa o cálculo da amostra uma vez quando a página carrega para mostrar valores iniciais
+        calculateSampleSize();
     </script>
 </body>
 </html>
